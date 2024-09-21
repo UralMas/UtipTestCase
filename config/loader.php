@@ -10,9 +10,10 @@ $loader = new Loader();
 /**
  * Регистрация файлов классов через папки
  */
-$loader->setDirectories(
+$loader->setNamespaces(
     [
-        $config->application->controllersDir,
-        $config->application->modelsDir
+        'UtipTestCase\Controllers'  => $config->application->controllersDir,
+        'UtipTestCase\Libraries'	=> $config->application->librariesDir,
+        'UtipTestCase\Models'		=> $config->application->modelsDir
     ]
 )->register();

@@ -16,7 +16,7 @@ class Tokens extends Model
     /**
      * ID записи
      */
-    public int $id;
+    public int $id = 0;
 
     /**
      * ID пользователя
@@ -31,7 +31,7 @@ class Tokens extends Model
     /**
      * Дата создания токена
      */
-    public string $created_at;
+    public ?string $created_at = null;
 
     /**
      * Инициализация модели
@@ -44,6 +44,18 @@ class Tokens extends Model
         $this->addBehavior(new Timestampable(
             [
                 'beforeCreate' => [
+                    'field' => 'created_at',
+                    'format' => 'Y-m-d H:i:s'
+                ]
+            ]
+        ));
+
+        /**
+         * Автоматическая установка даты создания при обновлении
+         */
+        $this->addBehavior(new Timestampable(
+            [
+                'beforeUpdate' => [
                     'field' => 'created_at',
                     'format' => 'Y-m-d H:i:s'
                 ]

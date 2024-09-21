@@ -6,7 +6,6 @@ namespace UtipTestCase\Models;
 
 use Phalcon\Filter\Validation;
 use Phalcon\Filter\Validation\Validator\PresenceOf;
-use Phalcon\Filter\Validation\Validator\Uniqueness as UniquenessValidator;
 
 /**
  * Изображения, связанные с постами

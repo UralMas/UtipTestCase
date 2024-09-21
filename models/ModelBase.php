@@ -17,12 +17,12 @@ class ModelBase extends Model
     /**
      * ID записи
      */
-    public int $id;
+    public int $id = 0;
 
     /**
      * Дата создания
      */
-    public string $created_at;
+    public ?string $created_at = null;
 
     /**
      * Инициализация модели

@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace UtipTestCase\Models;
 
 use Phalcon\Filter\Validation;
-use Phalcon\Filter\Validation\Validator\{
+use Phalcon\Filter\Validation\Validator\{Callback as CallbackValidator,
+    InclusionIn,
     PresenceOf,
-    Uniqueness as UniquenessValidator,
-    Callback as CallbackValidator,
     StringLength,
-    InclusionIn
-};
+    Uniqueness as UniquenessValidator};
 use Phalcon\Mvc\Model;
+use Phalcon\Mvc\Model\Behavior\SoftDelete;
 
 /**
  * Токены авторизации
@@ -35,7 +34,7 @@ class Users extends Model
     /**
      * ID пользователя
      */
-    public int $id;
+    public int $id = 0;
 
     /**
      * Группа пользователя
@@ -55,7 +54,7 @@ class Users extends Model
     /**
      * Статус
      */
-    public int $state;
+    public int $state = 1;
 
     /**
      * Действия перед сохранением
@@ -69,7 +68,7 @@ class Users extends Model
 
         if (trim($this->password) === '') {
             $this->password = $originalData['password'];
-        } elseif ($this->password !== $originalData['password']) {
+        } elseif (! array_key_exists('password', $originalData) || $this->password !== $originalData['password']) {
             $this->password = $this->getDI()->getSecurity()->hash($this->password);
         }
     }
@@ -166,6 +165,16 @@ class Users extends Model
          * Сохранение слепка данных перед сохранением
          */
         $this->keepSnapshots(true);
+
+        /**
+         * Подмена удаления на отключение записи
+         */
+        $this->addBehavior(new SoftDelete(
+            [
+                'field' => 'state',
+                'value' => self::STATE_DELETED
+            ]
+        ));
     }
 
 }

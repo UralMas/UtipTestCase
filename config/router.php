@@ -7,15 +7,21 @@ use UtipTestCase\Controllers as Controllers;
  * Регистрация роутинга
  */
 
-$launcher = new MicroCollection();
+/** @var Phalcon\Mvc\Micro $app */
 
-$launcher->setHandler(Controllers\IndexController::class, true)
+$auth = new MicroCollection();
+
+$auth->setHandler(Controllers\AuthController::class, true)
     ->setPrefix('/api/v1')
     ->get(
-        '/user/data',
-        'userData',
-        'launcherUserData'
+        '/auth',
+        'auth',
+        'auth'
+    )
+    ->get(
+        '/registration',
+        'registration',
+        'registration'
     );
 
-/** @var Phalcon\Mvc\Micro $app */
-$app->mount($launcher);
+$app->mount($auth);

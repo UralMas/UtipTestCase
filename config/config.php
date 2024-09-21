@@ -17,6 +17,7 @@ return new Config([
     'application' => [
         // Папки приложения
         'controllersDir' => APP_PATH . '/controllers/',
+        'librariesDir'   => APP_PATH . '/libraries/',
         'migrationsDir'  => APP_PATH . '/migrations/',
         'modelsDir'      => APP_PATH . '/models/',
 

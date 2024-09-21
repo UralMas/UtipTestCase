@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use Phalcon\Di\FactoryDefault;
+use Phalcon\Http\Response;
 use Phalcon\Mvc\Micro;
 
 error_reporting(E_ALL);
@@ -37,11 +38,51 @@ try {
     include APP_PATH . '/config/router.php';
 
     /**
+     * Обработка неверного запроса
+     */
+    $app->notFound(
+        function () use ($app) {
+            if ($app->request->isGet()) {
+                throw new Exception('Not Found', 404);
+            } else {
+                throw new Exception('Method Not Allowed', 405);
+            }
+        }
+    );
+
+    /**
+     * Обработка полученного результата и выдача в JSON
+     */
+    $app->after(
+        function () use ($app) {
+            $result = $app->getReturnedValue();
+            $result['success'] = true;
+
+            echo json_encode($result, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE);
+        }
+    );
+
+    /**
      * Обработка запроса
      */
     $app->handle(
         $_SERVER['REQUEST_URI']
     );
 } catch (Exception $e) {
-    echo $e->getMessage() . '<br>';
+    /**
+     * Обработка ошибок
+     */
+    $content = json_encode(
+        [
+            'success' => false,
+            'message' => $e->getMessage()
+        ],
+        JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE
+    );
+
+    $response = new Response();
+
+    $response->setStatusCode($e->getCode() != 0 ? $e->getCode() : 400);
+    $response->setContent($content);
+    $response->send();
 }
