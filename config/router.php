@@ -3,6 +3,10 @@
 use Phalcon\Mvc\Micro\Collection as MicroCollection;
 use UtipTestCase\Controllers as Controllers;
 
+/**
+ * Регистрация роутинга
+ */
+
 $launcher = new MicroCollection();
 
 $launcher->setHandler(Controllers\IndexController::class, true)

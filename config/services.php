@@ -1,21 +1,18 @@
 <?php
+
 declare(strict_types=1);
-
-use Phalcon\Session\Adapter\Stream as SessionAdapter;
-use Phalcon\Session\Manager as SessionManager;
-
 
 /** @var Phalcon\Di\Di $di */
 
 /**
- * Shared configuration service
+ * Регистрация конфига
  */
 $di->setShared('config', function () {
     return include APP_PATH . "/config/config.php";
 });
 
 /**
- * Database connection is created based in the parameters defined in the configuration file
+ * Подключение к БД и регистрация как сервиса
  */
 $di->setShared('db', function () {
     $config = $this->getConfig();
@@ -32,19 +29,8 @@ $di->setShared('db', function () {
 });
 
 /**
- * Start the session the first time some component request the session service
+ * Регистрация сервиса безопасности
  */
-$di->setShared('session', function () {
-    $session = new SessionManager();
-    $files = new SessionAdapter([
-        'savePath' => sys_get_temp_dir(),
-    ]);
-    $session->setAdapter($files);
-    $session->start();
-
-    return $session;
-});
-
 $di->setShared('security', function(){
     $security = new Phalcon\Encryption\Security();
     $security->setWorkFactor(13);

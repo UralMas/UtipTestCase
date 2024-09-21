@@ -10,35 +10,34 @@ const APP_PATH = __DIR__;
 
 try {
     /**
-     * The FactoryDefault Dependency Injector automatically registers
-     * the services that provide a full stack framework.
+     * Создание фабрики сервисов
      */
     $di = new FactoryDefault();
 
     /**
-     * Read services
+     * Регистрация сервисов
      */
     include APP_PATH . '/config/services.php';
 
     /**
-     * Get config service for use in inline setup below
+     * Чтение конфигурации
      */
     $config = $di->getConfig();
 
     /**
-     * Include Autoloader
+     * Автолоад файлов
      */
     include APP_PATH . '/config/loader.php';
 
     $app = new Micro($di);
 
     /**
-     * Handle routes
+     * Регистрация роутинга
      */
     include APP_PATH . '/config/router.php';
 
     /**
-     * Handle the request
+     * Обработка запроса
      */
     $app->handle(
         $_SERVER['REQUEST_URI']

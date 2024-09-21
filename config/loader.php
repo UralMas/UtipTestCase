@@ -8,7 +8,7 @@ $config = $di->getConfig();
 $loader = new Loader();
 
 /**
- * We're a registering a set of directories taken from the configuration file
+ * Регистрация файлов классов через папки
  */
 $loader->setDirectories(
     [
