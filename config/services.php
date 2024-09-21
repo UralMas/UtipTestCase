@@ -44,3 +44,11 @@ $di->setShared('session', function () {
 
     return $session;
 });
+
+$di->setShared('security', function(){
+    $security = new Phalcon\Encryption\Security();
+    $security->setWorkFactor(13);
+    $security->setDefaultHash(Phalcon\Encryption\Security::CRYPT_ARGON2ID);
+
+    return $security;
+});

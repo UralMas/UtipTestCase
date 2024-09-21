@@ -7,7 +7,7 @@ return new Config([
         'host'        => 'localhost',
         'username'    => 'root',
         'password'    => '',
-        'dbname'      => 'test',
+        'dbname'      => 'utip',
         'charset'     => 'utf8',
     ],
     'application' => [
