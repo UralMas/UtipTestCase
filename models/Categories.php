@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace UtipTestCase\Models;
 
+use Phalcon\Filter\Validation;
+use Phalcon\Filter\Validation\Validator\PresenceOf;
+use Phalcon\Filter\Validation\Validator\Uniqueness as UniquenessValidator;
+
 /**
  * Категории постов
  */
@@ -14,6 +18,29 @@ class Categories extends ModelBase
      * Наименование
      */
     public string $name;
+
+    /**
+     * Валидация данных
+     */
+    public function validation(): bool
+    {
+        $validator = new Validation();
+
+        $validator->rules(
+            "name",
+            [
+                new PresenceOf([
+                    "message" => "Не указано название категории"
+                ]),
+                new UniquenessValidator([
+                    "message" => "Такое название уже используется. Пожалуйста, укажите другое.",
+                    'allowEmpty' => true
+                ])
+            ]
+        );
+
+        return $this->validate($validator);
+    }
 
     /**
      * Инициализация модели

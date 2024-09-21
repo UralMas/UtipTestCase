@@ -20,8 +20,6 @@ CREATE TABLE `categories` (
                             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                             `name` varchar(255) NOT NULL,
                             `created_at` datetime NOT NULL,
-                            `updated_at` datetime DEFAULT NULL,
-                            `state` tinyint(1) unsigned NOT NULL DEFAULT '1',
                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -32,8 +30,6 @@ CREATE TABLE `posts` (
                          `title` varchar(255) NOT NULL,
                          `content` text NOT NULL,
                          `created_at` datetime NOT NULL,
-                         `updated_at` datetime DEFAULT NULL,
-                         `state` tinyint(1) unsigned NOT NULL DEFAULT '1',
                           PRIMARY KEY (`id`),
                          KEY `idx_category_id` (`category_id`),
                          KEY `idx_author_id` (`author_id`)
@@ -45,8 +41,6 @@ CREATE TABLE `images` (
                          `title` varchar(255) NOT NULL,
                          `filename` varchar(255) NOT NULL,
                          `created_at` datetime NOT NULL,
-                         `updated_at` datetime DEFAULT NULL,
-                         `state` tinyint(1) unsigned NOT NULL DEFAULT '1',
                          PRIMARY KEY (`id`),
                          KEY `idx_post_id` (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
