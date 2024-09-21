@@ -1,0 +1,6 @@
+/.idea/
+/backups/
+/composer.lock
+/*.txt
+/logs/*
+!/logs/.gitkeep
