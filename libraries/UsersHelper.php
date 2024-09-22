@@ -19,6 +19,13 @@ class UsersHelper
      */
     public static function registerUser(string $login, string $password, int $groupId = 2): int
     {
+        /**
+         * Проверка полученных данных
+         */
+        if (empty($login) || empty($password)) {
+            throw new Exception('Не указан логин или пароль', 400);
+        }
+
         $user = new Users([
             'login' => $login,
             'password' => $password,
@@ -29,6 +36,6 @@ class UsersHelper
             throw new Exception($user->getMessages()[0]->getMessage(), 400);
         }
 
-        return (int) $user->id;
+        return $user->id;
     }
 }

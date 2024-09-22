@@ -9,19 +9,37 @@ use UtipTestCase\Controllers as Controllers;
 
 /** @var Phalcon\Mvc\Micro $app */
 
+/**
+ * Авторизация и регистрация
+ */
 $auth = new MicroCollection();
 
 $auth->setHandler(Controllers\AuthController::class, true)
     ->setPrefix('/api/v1')
-    ->get(
+    ->post(
         '/auth',
         'auth',
         'auth'
     )
-    ->get(
+    ->post(
         '/registration',
         'registration',
         'registration'
+    );
+
+$app->mount($auth);
+
+/**
+ * Действия с постами
+ */
+$auth = new MicroCollection();
+
+$auth->setHandler(Controllers\AuthController::class, true)
+    ->setPrefix('/api/v1/posts')
+    ->get(
+        '/',
+        'getPosts',
+        'getPosts'
     );
 
 $app->mount($auth);

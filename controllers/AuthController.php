@@ -26,8 +26,8 @@ class AuthController extends PostsController
         /**
          * Получение и очистка данных из POST-запроса
          */
-        $login = $this->request->get('login', 'string', '');
-        $password = $this->request->get('password', 'string', '');
+        $login = $this->request->getPost('login', 'string', '');
+        $password = $this->request->getPost('password', 'string', '');
 
         /**
          * Проверка полученных данных
@@ -109,16 +109,10 @@ class AuthController extends PostsController
          */
         $login = $this->request->getPost('login', 'string', '');
         $password = $this->request->getPost('password', 'string', '');
-
-        /**
-         * Проверка полученных данных
-         */
-        if (empty($login) || empty($password)) {
-            throw new Exception('Не указан логин или пароль', 400);
-        }
+        $groupId = $this->request->getPost('group_id', 'int', 2);
 
         return [
-            'user_id' => UsersHelper::registerUser($login, $password)
+            'user_id' => UsersHelper::registerUser($login, $password, $groupId)
         ];
     }
 

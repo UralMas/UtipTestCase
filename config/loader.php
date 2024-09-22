@@ -12,8 +12,8 @@ $loader = new Loader();
  */
 $loader->setNamespaces(
     [
-        'UtipTestCase\Controllers'  => $config->application->controllersDir,
-        'UtipTestCase\Libraries'	=> $config->application->librariesDir,
-        'UtipTestCase\Models'		=> $config->application->modelsDir
+        'UtipTestCase\Controllers'  => APP_PATH . '/controllers/',
+        'UtipTestCase\Libraries'	=> APP_PATH . '/libraries/',
+        'UtipTestCase\Models'		=> APP_PATH . '/models/'
     ]
 )->register();

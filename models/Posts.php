@@ -100,6 +100,32 @@ class Posts extends ModelBase
         parent::initialize();
 
         /**
+         * Связь с Categories Users по типу "many to one"
+         */
+        $this->belongsTo(
+            'category_id',
+            Categories::class,
+            'id',
+            [
+                'reusable' => true,
+                'alias' => 'category',
+            ]
+        );
+
+        /**
+         * Связь с таблицей Users по типу "many to one"
+         */
+        $this->belongsTo(
+            'author_id',
+            Users::class,
+            'id',
+            [
+                'reusable' => true,
+                'alias' => 'author',
+            ]
+        );
+
+        /**
          * Связь с таблицей Images по типу "one-to-many"
          */
         $this->hasMany(

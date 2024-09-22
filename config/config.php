@@ -6,22 +6,18 @@ use Phalcon\Config\Config;
  * Конфиг проекта
  */
 return new Config([
+    // Настройки БД
     'database' => [
-        // Настройки БД
         'host'        => 'localhost',
         'username'    => 'root',
         'password'    => '',
         'dbname'      => 'utip',
         'charset'     => 'utf8',
     ],
+    // Настройки приложения
     'application' => [
-        // Папки приложения
-        'controllersDir' => APP_PATH . '/controllers/',
-        'librariesDir'   => APP_PATH . '/libraries/',
-        'migrationsDir'  => APP_PATH . '/migrations/',
-        'modelsDir'      => APP_PATH . '/models/',
-
-        // Настройки приложения
-        'tokenLifetime' => 86400, // Время жизни токена
+        'tokenLifetime' => 86400, // Время жизни токена авторизации
+        'imagesFolder'  => APP_PATH . '/images/', // Папка для сохранения загружаемых изображений
+        'imagesUrl'     => 'https://utip.ru/images/', // Путь для формирования ссылки на изображение
     ]
 ]);
