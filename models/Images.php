@@ -29,6 +29,15 @@ class Images extends \Phalcon\Mvc\Model
     public string $filename;
 
     /**
+     * Действия после удаления
+     */
+    public function afterDelete(): void
+    {
+        // Удаление файла после удаления записи
+        @unlink($this->getDI()->getConfig()->application->imagesFolder . $this->filename);
+    }
+
+    /**
      * Валидация данных
      */
     public function validation(): bool
@@ -48,7 +57,7 @@ class Images extends \Phalcon\Mvc\Model
             "filename",
             [
                 new PresenceOf([
-                    "message" => "Не указано название файла"
+                    "message" => "Не указано имя файла"
                 ])
             ]
         );

@@ -31,6 +31,7 @@ CREATE TABLE `posts` (
                          `title` varchar(255) NOT NULL,
                          `content` text NOT NULL,
                          `created_at` datetime DEFAULT NULL,
+                         `updated_at` datetime DEFAULT NULL,
                           PRIMARY KEY (`id`),
                          KEY `idx_category_id` (`category_id`),
                          KEY `idx_author_id` (`author_id`)

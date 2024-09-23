@@ -5,6 +5,7 @@ namespace UtipTestCase\Models;
 use Phalcon\Filter\Validation;
 use Phalcon\Filter\Validation\Validator\Callback as CallbackValidator;
 use Phalcon\Filter\Validation\Validator\PresenceOf;
+use Phalcon\Mvc\Model\Behavior\Timestampable;
 
 /**
  * Посты
@@ -31,6 +32,11 @@ class Posts extends ModelBase
      * Текстовое содержимое
      */
     public string $content;
+
+    /**
+     * Дата изменения
+     */
+    public ?string $update_at = null;
 
     /**
      * Валидация данных
@@ -98,6 +104,33 @@ class Posts extends ModelBase
     public function initialize(): void
     {
         parent::initialize();
+
+        /**
+         * Возможные пустые поля (для отключения валидации)
+         */
+        $this->allowEmptyStringValues(['updated_at']);
+
+        /**
+         * Обновление в БД только измененных полей
+         */
+        $this->useDynamicUpdate(true);
+
+        /**
+         * Пропуск полей при создании
+         */
+        $this->skipAttributesOnCreate(['updated_at']);
+
+        /**
+         * Автоматическая установка даты обновления
+         */
+        $this->addBehavior(new Timestampable(
+            [
+                'beforeUpdate' => [
+                    'field' => 'updated_at',
+                    'format' => 'Y-m-d H:i:s'
+                ]
+            ]
+        ));
 
         /**
          * Связь с Categories Users по типу "many to one"

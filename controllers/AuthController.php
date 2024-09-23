@@ -109,10 +109,9 @@ class AuthController extends PostsController
          */
         $login = $this->request->getPost('login', 'string', '');
         $password = $this->request->getPost('password', 'string', '');
-        $groupId = $this->request->getPost('group_id', 'int', 2);
 
         return [
-            'user_id' => UsersHelper::registerUser($login, $password, $groupId)
+            'user_id' => UsersHelper::registerUser($login, $password)
         ];
     }
 

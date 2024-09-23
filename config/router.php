@@ -32,14 +32,29 @@ $app->mount($auth);
 /**
  * Действия с постами
  */
-$auth = new MicroCollection();
+$posts = new MicroCollection();
 
-$auth->setHandler(Controllers\AuthController::class, true)
+$posts->setHandler(Controllers\AuthController::class, true)
     ->setPrefix('/api/v1/posts')
     ->get(
         '/',
         'getPosts',
         'getPosts'
+    )
+    ->get(
+        '/add',
+        'addPosts',
+        'addPosts'
+    )
+    ->get(
+        '/{id:[0-9]+/edit',
+        'editPost',
+        'editPost'
+    )
+    ->get(
+        '/{id:[0-9]+/delete',
+        'deletePost',
+        'deletePost'
     );
 
-$app->mount($auth);
+$app->mount($posts);

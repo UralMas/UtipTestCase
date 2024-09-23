@@ -22,10 +22,16 @@ class PostsController extends Controller
 {
 
     /**
+     * Список разрешённых действий для непривилегированного пользователя
+     */
+    private const ALLOWED_ACTIONS = [
+        'getPosts'
+    ];
+
+    /**
      * Данные пользователя
      */
     private User $user;
-
 
     /**
      * Проверка авторизации перед любым роутингом в данный контроллер
@@ -75,6 +81,15 @@ class PostsController extends Controller
         }
 
         /** @var Users $userEntry */
+
+        /**
+         * Если пользователь - непривилегированный,
+         * то идёт проверка на возможность доступа к данному методу
+         */
+        if ($userEntry->group_id != Users::GROUP_ADMIN
+            && ! in_array($dispatcher->getActionName(), self::ALLOWED_ACTIONS, true)) {
+            throw new Exception('Доступ к данному методу запрещён', 405);
+        }
 
         /**
          * Создание класса-хранилища данных пользователя для дальнейшего использования
@@ -229,5 +244,116 @@ class PostsController extends Controller
         }
 
         return $response;
+    }
+
+    /**
+     * Создание нового поста
+     *
+     * @throws Exception
+     */
+    public function addPost(): array
+    {
+        /**
+         * Обработка и очистка POST-параметров
+         */
+        $title = $this->request->get('title', 'string', '');
+        $content = $this->request->get('content', 'string', '');
+        $categoryId = $this->request->get('category_id', 'int', 0);
+
+        /**
+         * Если не указан автор - то автором становится пользователь, который публикует пост
+         */
+        $authorId = $this->request->get('author_id', 'int', $this->user->getId());
+
+        $post = new Posts([
+            'category_id'   => $categoryId,
+            'author_id'     => $authorId,
+            'title'         => $title,
+            'content'       => $content
+        ]);
+
+        /**
+         * Валидация и сохранение поста
+         */
+        if (! $post->create()) {
+            throw new Exception($post->getMessages()[0]->getMessage(), 400);
+        }
+
+        return [
+            'id' => $post->id,
+            'create_at' => $post->created_at
+        ];
+    }
+
+    /**
+     * Редактирование поста
+     *
+     * @throws Exception
+     */
+    public function editPost(int $id): array
+    {
+        $post = Posts::findFirstById($id);
+
+        if (! $post) {
+            throw new Exception("Пост с ID: $id не найден", 400);
+        }
+
+        /**
+         * Обработка и очистка POST-параметров
+         */
+        $title = $this->request->get('title', 'string', '');
+        $content = $this->request->get('content', 'string', '');
+        $authorId = $this->request->get('author_id', 'int', 0);
+
+        if (empty($title) && empty($content) && $authorId == 0) {
+            throw new Exception("Не переданы параметры, которые надо изменить", 400);
+        }
+
+        /**
+         * Изменение данных поста
+         */
+        if (! empty($title)) {
+            $post->title = $title;
+        }
+        if (! empty($content)) {
+            $post->content = $content;
+        }
+        if ($authorId != 0) {
+            $post->author_id = $authorId;
+        }
+
+        /**
+         * Валидация и сохранение поста
+         */
+        if (! $post->update()) {
+            throw new Exception($post->getMessages()[0]->getMessage(), 400);
+        }
+
+        return [
+            'updated_at' => $post->updated_at
+        ];
+    }
+
+    /**
+     * Удаление поста
+     *
+     * @throws Exception
+     */
+    public function deletePost(int $id): array
+    {
+        $post = Posts::findFirstById($id);
+
+        if (! $post) {
+            throw new Exception("Пост с ID: $id не найден", 400);
+        }
+
+        /**
+         * Удаление поста
+         */
+        if (! $post->delete()) {
+            throw new Exception($post->getMessages()[0]->getMessage(), 400);
+        }
+
+        return [];
     }
 }
