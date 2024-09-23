@@ -10,7 +10,7 @@ use Phalcon\Filter\Validation\Validator\PresenceOf;
 /**
  * Изображения, связанные с постами
  */
-class Images extends \Phalcon\Mvc\Model
+class Images extends ModelBase
 {
 
     /**

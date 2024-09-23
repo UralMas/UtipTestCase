@@ -11,6 +11,7 @@ use UtipTestCase\Libraries\ImagesHelper;
 use UtipTestCase\Libraries\PostsHelper;
 use UtipTestCase\Libraries\User;
 use UtipTestCase\Libraries\Utils;
+use UtipTestCase\Models\Categories;
 use UtipTestCase\Models\Posts;
 use UtipTestCase\Models\Tokens;
 use UtipTestCase\Models\Users;
@@ -25,7 +26,9 @@ class PostsController extends Controller
      * Список разрешённых действий для непривилегированного пользователя
      */
     private const ALLOWED_ACTIONS = [
-        'getPosts'
+        'getCategories',
+        'getPosts',
+        'getImages',
     ];
 
     /**
@@ -204,42 +207,7 @@ class PostsController extends Controller
              * Формирование данных постов
              */
             foreach ($posts as $post) {
-                $postData = [];
-
-                /**
-                 * Заполнение данных полей
-                 */
-                foreach ($fields as $field) {
-                    $postData[$field] = $post->$field;
-                }
-
-                /**
-                 * Данные категории
-                 */
-                if (in_array('category', $expandModels, true)) {
-                    $postData['category'] = [
-                        'name' => $post->category->name
-                    ];
-                }
-
-                /**
-                 * Данные изображений
-                 */
-                if (in_array('images', $expandModels, true)) {
-                    $images = [];
-
-                    foreach ($post->images as $image) {
-                        $images[] = [
-                            'id'    => $image->id,
-                            'title' => $image->title,
-                            'url'   => ImagesHelper::getImageUrl($image->filename)
-                        ];
-                    }
-
-                    $postData['images'] = $images;
-                }
-
-                $response['posts'][] = $postData;
+                $response['posts'][] = PostsHelper::getPostData($post, $fields, $expandModels);
             }
         }
 
@@ -355,5 +323,183 @@ class PostsController extends Controller
         }
 
         return [];
+    }
+
+    /**
+     * Вывод данных категорий постов
+     *
+     * @throws Exception
+     */
+    public function getCategories(): array
+    {
+        /**
+         * Обработка и проверка GET-параметра "expand" (включение данных из других моделей)
+         * Разрешены связки с только моделями Posts и Images
+         */
+        $expandModels = PostsHelper::getExpandModelsForRequest(
+            $this->request->getQuery('expand', 'string', ''),
+            ['posts', 'images']
+        );
+
+        /**
+         * Обработка и проверка GET-параметра "fields" (вывод только определённых полей категорий)
+         */
+        $possibleFieldsNames = ['id', 'name', 'created_at'];
+
+        $fields = PostsHelper::getFieldsForRequest(
+            $this->request->getQuery('fields', 'string', ''),
+            $possibleFieldsNames,
+            $possibleFieldsNames
+        );
+
+        /**
+         * Обработка и проверка GET-параметра "sort"
+         */
+        $sort = PostsHelper::getSortForRequest(
+            $this->request->getQuery('sort', 'string', ''),
+            ['id', 'name', 'created_at']
+        );
+
+        /**
+         * Обработка и очистка прочих GET-параметров
+         */
+        $offset = $this->request->getQuery('offset', 'int', 0);
+        $limit = $this->request->getQuery('limit', 'int', 0);
+
+        /**
+         * Вначале определяем общее количество категорий постов
+         */
+        $total = Categories::count();
+
+        /**
+         * Составляем каркас ответа
+         */
+        $response = [
+            'categories' => [],
+            'pagination' => [
+                'total'     => $total,
+                'offset'    => $offset,
+                'limit'     => $limit
+            ]
+        ];
+
+        /**
+         * Если категории по данным условиям существуют - составляем запрос выборки
+         */
+        if ($total > $offset) {
+            $query = [];
+
+            /**
+             * Сортировка
+             */
+            if (! empty($sort)) {
+                $query['order'] = implode(', ', $sort);
+            }
+
+            /**
+             * Пагинация
+             */
+            if (! empty($offset)) {
+                $query['offset'] = $offset;
+            }
+            if (! empty($limit)) {
+                $query['limit'] = $limit;
+            }
+
+            $categories = Categories::find($query);
+
+            /**
+             * Формирование данных постов
+             */
+            foreach ($categories as $category) {
+                $categoryData = [];
+
+                /**
+                 * Заполнение данных полей
+                 */
+                foreach ($fields as $field) {
+                    $categoryData[$field] = $category->$field;
+                }
+
+                /**
+                 * Данные постов
+                 */
+                if (in_array('posts', $expandModels, true)) {
+                    $postFields = ['id', 'author_id', 'category_id', 'title', 'content', 'created_at'];
+                    $postExpandModels = [];
+
+                    if (in_array('images', $expandModels, true)) {
+                        $postExpandModels[] = 'images';
+                    }
+
+                    $categoryData['posts'] = [];
+
+                    foreach ($category->posts as $post) {
+                        $categoryData['posts'][] = PostsHelper::getPostData($post, $postFields, $postExpandModels);
+                    }
+                }
+
+                /**
+                 * Данные изображений
+                 * Выводятся отдельно если только в запросе нет связки с постами, т.к. там тоже выводятся изображения
+                 */
+                if (in_array('images', $expandModels, true) && ! in_array('posts', $expandModels, true)) {
+                    $images = [];
+
+                    foreach ($category->images as $image) {
+                        $images[] = [
+                            'id'    => $image->id,
+                            'title' => $image->title,
+                            'url'   => ImagesHelper::getImageUrl($image->filename)
+                        ];
+                    }
+
+                    $categoryData['images'] = $images;
+                }
+
+                $response['categories'][] = $categoryData;
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Вывод данных изображений
+     *
+     * @throws Exception
+     */
+    public function getImages(): array
+    {
+        /**
+         * Обработка и проверка GET-параметра "fields" (вывод только определённых полей изображений)
+         */
+        $possibleFieldsNames = ['id', 'title', 'filename', 'url', 'created_at'];
+
+        $fields = PostsHelper::getFieldsForRequest(
+            $this->request->getQuery('fields', 'string', ''),
+            $possibleFieldsNames,
+            $possibleFieldsNames
+        );
+
+        /**
+         * Обработка и проверка GET-параметра "sort"
+         */
+        $sort = PostsHelper::getSortForRequest(
+            $this->request->getQuery('sort', 'string', ''),
+            ['id', 'name', 'created_at']
+        );
+
+        /**
+         * Обработка и очистка прочих GET-параметров
+         */
+        $categoryId = $this->request->get('category_id', 'int', 0);
+        $postId = $this->request->get('post_id', 'int', 0);
+        $offset = $this->request->getQuery('offset', 'int', 0);
+        $limit = $this->request->getQuery('limit', 'int', 0);
+
+        if ($categoryId != 0) {
+            $category = Categories::findFirstById($categoryId);
+        }
     }
 }

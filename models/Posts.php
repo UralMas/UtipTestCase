@@ -6,9 +6,14 @@ use Phalcon\Filter\Validation;
 use Phalcon\Filter\Validation\Validator\Callback as CallbackValidator;
 use Phalcon\Filter\Validation\Validator\PresenceOf;
 use Phalcon\Mvc\Model\Behavior\Timestampable;
+use Phalcon\Mvc\Model\Relation;
+use Phalcon\Mvc\View\Simple;
 
 /**
  * Посты
+ *
+ * @property Simple|Images[] $images
+ * @method   Simple|Images[] getImages($parameters = null)
  */
 class Posts extends ModelBase
 {
@@ -168,6 +173,9 @@ class Posts extends ModelBase
             [
                 'reusable' => true,
                 'alias' => 'images',
+                'foreignKey' => [
+                    'action' => Relation::ACTION_CASCADE, // Удаление связанных записей изображений при удалении записи поста
+                ],
             ]
         );
     }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace UtipTestCase\Libraries;
 
 use Exception;
+use UtipTestCase\Models\Images;
+use UtipTestCase\Models\Posts;
 
 /**
  * Класс-помощник для постов и всего, что с ними связано
@@ -88,5 +90,65 @@ class PostsHelper
         }
 
         return [];
+    }
+
+    /**
+     * Формирование данных поста
+     */
+    public static function getPostData(Posts $post, array $fields, array $expandModels): array
+    {
+        $postData = [];
+
+        /**
+         * Заполнение данных полей
+         */
+        foreach ($fields as $field) {
+            $postData[$field] = $post->$field;
+        }
+
+        /**
+         * Данные категории
+         */
+        if (in_array('category', $expandModels, true)) {
+            $category = $post->category;
+
+            $postData['category'] = [
+                'name'          => $category->name,
+                'created_at'    => $category->created_at
+            ];
+        }
+
+        /**
+         * Данные изображений
+         */
+        if (in_array('images', $expandModels, true)) {
+            $images = [];
+
+            $possibleFieldsNames = ['id', 'title', 'filename', 'url', 'created_at'];
+
+            foreach ($post->images as $image) {
+                $images[] = self::getImageData($image, $possibleFieldsNames);
+            }
+
+            $postData['images'] = $images;
+        }
+
+        return $postData;
+    }
+
+    /**
+     * Формирование данных изображения
+     */
+    public static function getImageData(Images $image, array $possibleFieldsNames): array
+    {
+        $imageData = [];
+
+        foreach ($possibleFieldsNames as $field) {
+            $imageData[$field] = $field !== 'url'
+                ? $image->$field
+                : ImagesHelper::getImageUrl($image->filename);
+        }
+
+        return $imageData;
     }
 }

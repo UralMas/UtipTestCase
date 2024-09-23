@@ -7,9 +7,16 @@ namespace UtipTestCase\Models;
 use Phalcon\Filter\Validation;
 use Phalcon\Filter\Validation\Validator\PresenceOf;
 use Phalcon\Filter\Validation\Validator\Uniqueness as UniquenessValidator;
+use Phalcon\Mvc\View\Simple;
 
 /**
  * Категории постов
+ *
+ * @property Simple|Posts[] $posts
+ * @method   Simple|Posts[] getProducts($parameters = null)
+ *
+ * @property Simple|Images[] $images
+ * @method   Simple|Images[] getImages($parameters = null)
  */
 class Categories extends ModelBase
 {
