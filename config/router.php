@@ -41,20 +41,30 @@ $posts->setHandler(Controllers\AuthController::class, true)
         'getPosts',
         'getPosts'
     )
-    ->get(
+    ->post(
         '/add',
-        'addPosts',
-        'addPosts'
+        'addPost',
+        'addPost'
     )
-    ->get(
-        '/{id:[0-9]+/edit',
+    ->post(
+        '/{id:[0-9]+}/edit',
         'editPost',
         'editPost'
     )
-    ->get(
-        '/{id:[0-9]+/delete',
+    ->post(
+        '/{id:[0-9]+}/delete',
         'deletePost',
         'deletePost'
+    )
+    ->get(
+        '/categories',
+        'getCategories',
+        'getCategories'
+    )
+    ->get(
+        '/images',
+        'getImages',
+        'getImages'
     );
 
 $app->mount($posts);

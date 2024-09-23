@@ -6,7 +6,6 @@ namespace UtipTestCase\Controllers;
 
 use Exception;
 use Phalcon\Mvc\Controller;
-use Phalcon\Mvc\Dispatcher;
 use UtipTestCase\Libraries\ImagesHelper;
 use UtipTestCase\Libraries\PostsHelper;
 use UtipTestCase\Libraries\User;
@@ -37,10 +36,10 @@ class PostsController extends Controller
     private User $user;
 
     /**
-     * Проверка авторизации перед любым роутингом в данный контроллер
+     * Проверка авторизации и доступа к методу
      * @throws Exception
      */
-    public function beforeExecuteRoute(Dispatcher $dispatcher): bool
+    public function onConstruct(): void
     {
         /*if (! $this->request->hasHeader('Authorization')) {
             throw new GameAccountException();
@@ -90,7 +89,7 @@ class PostsController extends Controller
          * то идёт проверка на возможность доступа к данному методу
          */
         if ($userEntry->group_id != Users::GROUP_ADMIN
-            && ! in_array($dispatcher->getActionName(), self::ALLOWED_ACTIONS, true)) {
+            && ! in_array($this->router->getMatchedRoute()->getName(), self::ALLOWED_ACTIONS, true)) {
             throw new Exception('Доступ к данному методу запрещён', 405);
         }
 
@@ -98,8 +97,6 @@ class PostsController extends Controller
          * Создание класса-хранилища данных пользователя для дальнейшего использования
          */
         $this->user = new User($userEntry->id, $userEntry->group_id);
-
-        return true;
     }
 
     /**
@@ -224,9 +221,13 @@ class PostsController extends Controller
         /**
          * Обработка и очистка POST-параметров
          */
-        $title = $this->request->get('title', 'string', '');
-        $content = $this->request->get('content', 'string', '');
-        $categoryId = $this->request->get('category_id', 'int', 0);
+        $title = $this->request->getPost('title', 'string', '');
+        $content = $this->request->getPost('content', 'string', '');
+        $categoryId = $this->request->getPost('category_id', 'int', 0);
+
+        if (empty($title) || empty($content) || $categoryId <= 0) {
+            throw new Exception("Переданы неверные данные", 400);
+        }
 
         /**
          * Если не указан автор - то автором становится пользователь, который публикует пост
@@ -269,9 +270,9 @@ class PostsController extends Controller
         /**
          * Обработка и очистка POST-параметров
          */
-        $title = $this->request->get('title', 'string', '');
-        $content = $this->request->get('content', 'string', '');
-        $authorId = $this->request->get('author_id', 'int', 0);
+        $title = $this->request->getPost('title', 'string', '');
+        $content = $this->request->getPost('content', 'string', '');
+        $authorId = $this->request->getPost('author_id', 'int', 0);
 
         if (empty($title) && empty($content) && $authorId == 0) {
             throw new Exception("Не переданы параметры, которые надо изменить", 400);

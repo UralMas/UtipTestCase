@@ -78,8 +78,7 @@ class Posts extends ModelBase
                     'message' => 'Указан неверный ID категории',
                     'callback' => function() {
                         return Categories::count("id = {$this->category_id}") != 0;
-                    },
-                    'allowEmpty' => true
+                    }
                 ])
             ]
         );
