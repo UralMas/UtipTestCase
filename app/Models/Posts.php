@@ -21,22 +21,22 @@ class Posts extends ModelBase
     /**
      * ID связанной категории
      */
-    public int $category_id;
+    public int $category_id = 0;
 
     /**
      * ID автора
      */
-    public int $author_id;
+    public int $author_id = 0;
 
     /**
      * Заголовок
      */
-    public string $title;
+    public ?string $title;
 
     /**
      * Текстовое содержимое
      */
-    public string $content;
+    public ?string $content;
 
     /**
      * Дата изменения

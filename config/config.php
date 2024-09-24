@@ -16,6 +16,7 @@ return new Config([
     ],
     // Настройки приложения
     'application' => [
+        'cacheLifetime'         => 7200, // Время жизни кэша запросов БД
         'tokenLifetime'         => 24 * 60 * 60, // Время жизни токена авторизации
         'imagesFolder'          => BASE_PATH . '/images/', // Папка для сохранения загружаемых изображений
         'imagesUrl'             => 'https://utip.ru/images/', // Путь для формирования ссылки на изображение

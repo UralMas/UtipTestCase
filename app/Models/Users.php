@@ -10,13 +10,13 @@ use Phalcon\Filter\Validation\Validator\{Callback as CallbackValidator,
     PresenceOf,
     StringLength,
     Uniqueness as UniquenessValidator};
-use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\Behavior\SoftDelete;
+use UtipTestCase\Models\ModelCacheable;
 
 /**
  * Токены авторизации
  */
-class Users extends Model
+class Users extends ModelCacheable
 {
 
     /**
@@ -32,24 +32,19 @@ class Users extends Model
     const GROUP_AUTHOR = 2; // Автор - может только получать данные
 
     /**
-     * ID пользователя
-     */
-    public int $id = 0;
-
-    /**
      * Группа пользователя
      */
-    public int $group_id;
+    public int $group_id = 0;
 
     /**
      * Логин
      */
-    public string $login;
+    public ?string $login;
 
     /**
      * Пароль (зашифрованный)
      */
-    public string $password;
+    public ?string $password;
 
     /**
      * Статус

@@ -4,29 +4,24 @@ declare(strict_types=1);
 
 namespace UtipTestCase\Models;
 
-use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\Behavior\Timestampable;
+use UtipTestCase\Models\ModelCacheable;
 
 /**
  * Токены авторизации
  */
-class Tokens extends Model
+class Tokens extends ModelCacheable
 {
-
-    /**
-     * ID записи
-     */
-    public int $id = 0;
 
     /**
      * ID пользователя
      */
-    public int $user_id;
+    public int $user_id = 0;
 
     /**
      * Сам токен
      */
-    public string $token;
+    public ?string $token;
 
     /**
      * Дата создания токена

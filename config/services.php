@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 /** @var Phalcon\Di\Di $di */
 
+use Phalcon\Cache\AdapterFactory;
+use Phalcon\Cache\Cache;
+use Phalcon\Storage\SerializerFactory;
+
 /**
  * Регистрация конфига
  */
@@ -27,6 +31,29 @@ $di->setShared('db', function () {
 
     return new Phalcon\Db\Adapter\Pdo\Mysql($params);
 });
+
+/**
+ * Настройка кэширования запросов БД
+ */
+$di->setShared(
+    'modelsCache',
+    function () {
+        $serializerFactory = new SerializerFactory();
+        $adapterFactory    = new AdapterFactory($serializerFactory);
+
+        /**
+         * Кэширование средствами PHP
+         */
+        $options = [
+            'defaultSerializer' => 'Php',
+            'lifetime'          => $this->getConfig()->application->cacheLifetime
+        ];
+
+        $adapter = $adapterFactory->newInstance('apcu', $options);
+
+        return new Cache($adapter);
+    }
+);
 
 /**
  * Регистрация сервиса безопасности

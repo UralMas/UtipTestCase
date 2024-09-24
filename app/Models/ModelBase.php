@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace UtipTestCase\Models;
 
-use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\Behavior\Timestampable;
+use UtipTestCase\Models\ModelCacheable;
 
 /**
  * Базовый класс моделей
- * Т.к. все модели, относящиеся к постам, имеют по 2 одинаковых поля - вынес общий код для них в базовый класс
+ * Т.к. все модели, относящиеся к постам, имеют одинаковое поле - вынес общий код для них в базовый класс
  */
-class ModelBase extends Model
+class ModelBase extends ModelCacheable
 {
-
-    /**
-     * ID записи
-     */
-    public int $id = 0;
 
     /**
      * Дата создания

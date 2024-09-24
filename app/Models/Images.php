@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace UtipTestCase\Models;
 
 use Phalcon\Filter\Validation;
-use Phalcon\Filter\Validation\Validator\Callback as CallbackValidator;
 use Phalcon\Filter\Validation\Validator\PresenceOf;
 
 /**
@@ -17,17 +16,17 @@ class Images extends ModelBase
     /**
      * ID связанного поста
      */
-    public int $post_id;
+    public int $post_id = 0;
 
     /**
      * Подпись к изображению
      */
-    public string $title;
+    public ?string $title;
 
     /**
      * Имя файла
      */
-    public string $filename;
+    public ?string $filename;
 
     /**
      * Действия после удаления

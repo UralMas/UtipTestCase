@@ -24,7 +24,7 @@ class Categories extends ModelBase
     /**
      * Наименование
      */
-    public string $name;
+    public ?string $name;
 
     /**
      * Валидация данных
