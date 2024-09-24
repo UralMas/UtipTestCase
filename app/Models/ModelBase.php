@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace UtipTestCase\Models;
 
 use Phalcon\Mvc\Model\Behavior\Timestampable;
-use UtipTestCase\Models\ModelCacheable;
 
 /**
  * Базовый класс моделей

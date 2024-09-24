@@ -88,4 +88,17 @@ class ModelCacheable extends Model
 
         return join(',', $uniqueKey);
     }
+
+    /**
+     * Очистка кэша после создания/изменения/удаления
+     */
+    public function afterSave(): void
+    {
+        $this->getDI()->getModelsCache()->clear();
+    }
+
+    public function afterDelete(): void
+    {
+        $this->getDI()->getModelsCache()->clear();
+    }
 }

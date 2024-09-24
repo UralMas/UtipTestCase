@@ -8,7 +8,6 @@ use Exception;
 use Phalcon\Di\Di;
 use Phalcon\Http\Request\FileInterface;
 use UtipTestCase\Models\Images;
-use UtipTestCase\Models\Posts;
 
 /**
  * Класс-помощник для файлов

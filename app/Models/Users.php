@@ -11,7 +11,6 @@ use Phalcon\Filter\Validation\Validator\{Callback as CallbackValidator,
     StringLength,
     Uniqueness as UniquenessValidator};
 use Phalcon\Mvc\Model\Behavior\SoftDelete;
-use UtipTestCase\Models\ModelCacheable;
 
 /**
  * Токены авторизации
