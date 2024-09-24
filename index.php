@@ -7,7 +7,8 @@ use Phalcon\Mvc\Micro;
 
 error_reporting(E_ALL);
 
-const APP_PATH = __DIR__;
+const BASE_PATH = __DIR__;
+const APP_PATH = BASE_PATH . '/app';
 
 try {
     /**
@@ -18,7 +19,7 @@ try {
     /**
      * Регистрация сервисов
      */
-    include APP_PATH . '/config/services.php';
+    include BASE_PATH . '/config/services.php';
 
     /**
      * Чтение конфигурации
@@ -28,14 +29,14 @@ try {
     /**
      * Автолоад файлов
      */
-    include APP_PATH . '/config/loader.php';
+    include BASE_PATH . '/config/loader.php';
 
     $app = new Micro($di);
 
     /**
      * Регистрация роутинга
      */
-    include APP_PATH . '/config/router.php';
+    include BASE_PATH . '/config/router.php';
 
     /**
      * Обработка неверного запроса

@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Регистрация конфига
  */
 $di->setShared('config', function () {
-    return include APP_PATH . "/config/config.php";
+    return include BASE_PATH . "/config/config.php";
 });
 
 /**
