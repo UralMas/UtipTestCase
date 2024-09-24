@@ -62,7 +62,7 @@ class PostsHelper
      * Обработка и проверка GET-параметра "sort"
      * @throws Exception
      */
-    public static function getSortForRequest(string $sortString, array $possibleSortFields): array
+    public static function getSortForRequest(string $sortString, array $possibleSortFields): ?string
     {
         if ($sortString !== '') {
             $fields = explode(',', $sortString);
@@ -86,10 +86,10 @@ class PostsHelper
                 throw new Exception('Неверные поля сортировки в запросе: "' . implode('", "', $invalidFields) . '"', 400);
             }
 
-            return $sortFields;
+            return implode(', ', $sortFields);
         }
 
-        return [];
+        return null;
     }
 
     /**

@@ -61,10 +61,20 @@ $posts->setHandler(Controllers\AuthController::class, true)
         'getCategories',
         'getCategories'
     )
+    ->post(
+        '/categories/{id:[0-9]+}/delete',
+        'deleteCategory',
+        'deleteCategory'
+    )
     ->get(
         '/images',
         'getImages',
         'getImages'
+    )
+    ->post(
+        '/images/{id:[0-9]+}/delete',
+        'deleteImage',
+        'deleteImage'
     );
 
 $app->mount($posts);

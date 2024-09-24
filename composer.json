@@ -3,6 +3,8 @@
         "php": ">=8.1.0",
         "ext-pdo": "*",
         "ext-json": "*",
-        "ext-fileinfo": "*"
+        "ext-fileinfo": "*",
+        "ext-sodium": "*",
+        "ext-phalcon": "5.8.0"
     }
 }

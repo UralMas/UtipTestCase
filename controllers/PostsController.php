@@ -11,6 +11,7 @@ use UtipTestCase\Libraries\PostsHelper;
 use UtipTestCase\Libraries\User;
 use UtipTestCase\Libraries\Utils;
 use UtipTestCase\Models\Categories;
+use UtipTestCase\Models\Images;
 use UtipTestCase\Models\Posts;
 use UtipTestCase\Models\Tokens;
 use UtipTestCase\Models\Users;
@@ -174,7 +175,7 @@ class PostsController extends Controller
         /**
          * Если посты по данным условиям существуют - составляем запрос выборки
          */
-        if ($total > $offset) {
+        if ($total > max(0, $offset)) {
             $query = [];
 
             if (! empty($conditions)) {
@@ -185,16 +186,16 @@ class PostsController extends Controller
              * Сортировка
              */
             if (! empty($sort)) {
-                $query['order'] = implode(', ', $sort);
+                $query['order'] = $sort;
             }
 
             /**
              * Пагинация
              */
-            if (! empty($offset)) {
+            if ($offset > 0) {
                 $query['offset'] = $offset;
             }
-            if (! empty($limit)) {
+            if ($limit > 0) {
                 $query['limit'] = $limit;
             }
 
@@ -387,23 +388,23 @@ class PostsController extends Controller
         /**
          * Если категории по данным условиям существуют - составляем запрос выборки
          */
-        if ($total > $offset) {
+        if ($total > max(0, $offset)) {
             $query = [];
 
             /**
              * Сортировка
              */
             if (! empty($sort)) {
-                $query['order'] = implode(', ', $sort);
+                $query['order'] = $sort;
             }
 
             /**
              * Пагинация
              */
-            if (! empty($offset)) {
+            if ($offset > 0) {
                 $query['offset'] = $offset;
             }
-            if (! empty($limit)) {
+            if ($limit > 0) {
                 $query['limit'] = $limit;
             }
 
@@ -466,6 +467,29 @@ class PostsController extends Controller
     }
 
     /**
+     * Удаление категории
+     *
+     * @throws Exception
+     */
+    public function deleteCategory(int $id): array
+    {
+        $category = Categories::findFirstById($id);
+
+        if (! $category) {
+            throw new Exception("Категория с ID: $id не найдена", 400);
+        }
+
+        /**
+         * Удаление категории
+         */
+        if (! $category->delete()) {
+            throw new Exception($category->getMessages()[0]->getMessage(), 400);
+        }
+
+        return [];
+    }
+
+    /**
      * Вывод данных изображений
      *
      * @throws Exception
@@ -499,8 +523,124 @@ class PostsController extends Controller
         $offset = $this->request->getQuery('offset', 'int', 0);
         $limit = $this->request->getQuery('limit', 'int', 0);
 
-        if ($categoryId != 0) {
+        if ($categoryId > 0) {
+            /**
+             * Если указана категория - выбираются изображения из связанных с ней постов
+             */
             $category = Categories::findFirstById($categoryId);
+
+            if ($category) {
+                if (! empty($sort)) {
+                    $images = $category->getRelated(
+                        'Images',
+                        [
+                            'order' => $sort,
+                        ]
+                    );
+                } else {
+                    $images = $category->images;
+                }
+            }
+        } elseif ($postId > 0) {
+            /**
+             * Если указан пост - выбираются связанные с ним изображения
+             */
+            $post = Posts::findFirstById($postId);
+
+            if ($post) {
+                if (! empty($sort)) {
+                    $images = $post->getRelated(
+                        'Images',
+                        [
+                            'order' => $sort,
+                        ]
+                    );
+                } else {
+                    $images = $post->images;
+                }
+            }
+        } else {
+            /**
+             * Если ничего не указано - выбираются все изображения
+             */
+            $query = [];
+
+            /**
+             * Сортировка
+             */
+            if (! empty($sort)) {
+                $query['order'] = $sort;
+            }
+
+            /**
+             * Пагинация
+             */
+            if ($offset > 0) {
+                $query['offset'] = $offset;
+            }
+            if ($limit > 0) {
+                $query['limit'] = $limit;
+            }
+
+            $images = Images::find($query);
         }
+
+        $total = isset($images) ? $images->count() : 0;
+
+        /**
+         * Составляем каркас ответа
+         */
+        $response = [
+            'images' => [],
+            'pagination' => [
+                'total'     => $total,
+                'offset'    => $offset,
+                'limit'     => $limit
+            ]
+        ];
+
+        /**
+         * Если изображения по данным условиям существуют - делаем выборку
+         */
+        if (isset($images) && $total > max(0, $offset)) {
+            $x = 0;
+
+            foreach ($images as $image) {
+                if ($x < $offset) {
+                    continue;
+                }
+
+                $response['images'][] = PostsHelper::getImageData($image, $fields);
+
+                if ($limit > 0 && ++$x == (max(0, $offset) + $limit)) {
+                    break;
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Удаление изображения
+     *
+     * @throws Exception
+     */
+    public function deleteImage(int $id): array
+    {
+        $image = Images::findFirstById($id);
+
+        if (! $image) {
+            throw new Exception("Изображение с ID: $id не найдено", 400);
+        }
+
+        /**
+         * Удаление изображения
+         */
+        if (! $image->delete()) {
+            throw new Exception($image->getMessages()[0]->getMessage(), 400);
+        }
+
+        return [];
     }
 }
