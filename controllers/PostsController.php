@@ -512,7 +512,8 @@ class PostsController extends Controller
          */
         $sort = PostsHelper::getSortForRequest(
             $this->request->getQuery('sort', 'string', ''),
-            ['id', 'name', 'created_at']
+            ['id', 'name', 'created_at'],
+            "UtipTestCase\Models\Images"
         );
 
         /**

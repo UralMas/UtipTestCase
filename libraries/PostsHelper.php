@@ -62,7 +62,7 @@ class PostsHelper
      * Обработка и проверка GET-параметра "sort"
      * @throws Exception
      */
-    public static function getSortForRequest(string $sortString, array $possibleSortFields): ?string
+    public static function getSortForRequest(string $sortString, array $possibleSortFields, string $prefix = null): ?string
     {
         if ($sortString !== '') {
             $fields = explode(',', $sortString);
@@ -79,7 +79,7 @@ class PostsHelper
                     $invalidFields[] = $field;
                 }
 
-                $sortFields[] = implode(' ', $fieldParts);
+                $sortFields[] = (! is_null($prefix) ? "$prefix." : '') . $fieldParts[0] . (isset($fieldParts[1]) ? " {$fieldParts[1]}" : '');
             }
 
             if (! empty($invalidFields)) {
