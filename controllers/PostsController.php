@@ -6,6 +6,7 @@ namespace UtipTestCase\Controllers;
 
 use Exception;
 use Phalcon\Mvc\Controller;
+use UtipTestCase\Libraries\FilesHelper;
 use UtipTestCase\Libraries\ImagesHelper;
 use UtipTestCase\Libraries\PostsHelper;
 use UtipTestCase\Libraries\User;
@@ -325,6 +326,47 @@ class PostsController extends Controller
         }
 
         return [];
+    }
+
+    /**
+     * Загрузка изображения в пост
+     *
+     * @throws Exception
+     */
+    public function uploadImage(int $id): array
+    {
+        if (! $this->request->hasFiles()) {
+            throw new Exception("В переданных данных нет файлов", 400);
+        }
+
+        $title = $this->request->getPost('title', 'string', '');
+
+        if (empty($title)) {
+            throw new Exception("Не передана подпись к изображению", 400);
+        }
+
+        $post = Posts::findFirstById($id);
+
+        if (! $post) {
+            throw new Exception("Пост с ID: $id не найден", 400);
+        }
+
+        $filename = FilesHelper::loadFile($this->request->getUploadedFiles()[0]);
+
+        $image = new Images([
+            'post_id'   => $post->id,
+            'title'     => $title,
+            'filename'  => $filename
+        ]);
+
+        if (! $image->create()) {
+            throw new Exception($image->getMessages()[0]->getMessage(), 400);
+        }
+
+        return [
+            'id' => $image->id,
+            'create_at' => $image->created_at
+        ];
     }
 
     /**

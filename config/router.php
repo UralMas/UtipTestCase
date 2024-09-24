@@ -56,6 +56,11 @@ $posts->setHandler(Controllers\AuthController::class, true)
         'deletePost',
         'deletePost'
     )
+    ->post(
+        '/{id:[0-9]+}/upload',
+        'uploadImage',
+        'uploadImage'
+    )
     ->get(
         '/categories',
         'getCategories',

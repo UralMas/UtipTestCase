@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace UtipTestCase\Models;
 
 use Phalcon\Filter\Validation;
+use Phalcon\Filter\Validation\Validator\Callback as CallbackValidator;
 use Phalcon\Filter\Validation\Validator\PresenceOf;
 
 /**
