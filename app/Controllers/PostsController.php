@@ -43,12 +43,12 @@ class PostsController extends Controller
      */
     public function onConstruct(): void
     {
-        /*if (! $this->request->hasHeader('Authorization')) {
-            throw new GameAccountException();
+        /*$token = $this->request->get('token', 'string', '');*/
+        if (! $this->request->hasHeader('Authorization')) {
+            throw new Exception('Не передан токен авторизации', 401);
         }
 
-        $token = substr($this->request->getHeader('Authorization'), 7);*/
-        $token = $this->request->get('token', 'string', '');
+        $token = substr($this->request->getHeader('Authorization'), 7);
 
         /**
          * Проверка полученных данных
@@ -124,7 +124,10 @@ class PostsController extends Controller
 
         $fields = PostsHelper::getFieldsForRequest(
             $this->request->getQuery('fields', 'string', ''),
-            $possibleFieldsNames,
+            array_merge(
+                $possibleFieldsNames,
+                ['update_at']
+            ),
             $possibleFieldsNames
         );
 
@@ -274,9 +277,10 @@ class PostsController extends Controller
          */
         $title = $this->request->getPost('title', 'string', '');
         $content = $this->request->getPost('content', 'string', '');
+        $categoryId = $this->request->getPost('category_id', 'int', 0);
         $authorId = $this->request->getPost('author_id', 'int', 0);
 
-        if (empty($title) && empty($content) && $authorId == 0) {
+        if (empty($title) && empty($content) && $categoryId == 0 && $authorId == 0) {
             throw new Exception("Не переданы параметры, которые надо изменить", 400);
         }
 
@@ -288,6 +292,9 @@ class PostsController extends Controller
         }
         if (! empty($content)) {
             $post->content = $content;
+        }
+        if ($categoryId != 0) {
+            $post->category_id = $categoryId;
         }
         if ($authorId != 0) {
             $post->author_id = $authorId;
@@ -561,8 +568,8 @@ class PostsController extends Controller
         /**
          * Обработка и очистка прочих GET-параметров
          */
-        $categoryId = $this->request->get('category_id', 'int', 0);
-        $postId = $this->request->get('post_id', 'int', 0);
+        $categoryId = $this->request->getQuery('category_id', 'int', 0);
+        $postId = $this->request->getQuery('post_id', 'int', 0);
         $offset = $this->request->getQuery('offset', 'int', 0);
         $limit = $this->request->getQuery('limit', 'int', 0);
 
