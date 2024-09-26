@@ -37,22 +37,34 @@ class FilesHelper
         /**
          * Проверка на дубликат файла (подразумевается, что файлы с одинаковым названием - это один и тот же файл)
          */
-        $dupedImage = Images::findFirst([
+        $dupedImage = Images::count([
             'conditions' => 'filename = :filename:',
             'bind' => [
                 'filename' => $file->getName()
             ]
         ]);
 
-        if ($dupedImage) {
+        if ($dupedImage != 0) {
             throw new Exception('Файл с таким же названием уже был загружен', 400);
+        }
+
+        $imagesPath = DI::getDefault()->getConfig()->application->imagesFolder;
+
+        /**
+         * Проверка на существование папки хранения изображений
+         */
+        if (! file_exists($imagesPath)) {
+            /**
+             * Если папка не существует - создаём её
+             */
+            mkdir($imagesPath, 0755);
         }
 
         /**
          * Загрузка файла в папку хранения изображений
          */
         $file->moveTo(
-            DI::getDefault()->getConfig()->application->imagesFolder . $file->getName()
+            $imagesPath . $file->getName()
         );
 
         return $file->getName();
