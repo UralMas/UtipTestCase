@@ -13,11 +13,6 @@ const APP_PATH = BASE_PATH . 'app';
 const CLI_PATH = __DIR__;
 
 /**
- * Подключение пакетов
- */
-include BASE_PATH . '/vendor/autoload.php';
-
-/**
  * Создание фабрики сервисов
  */
 $di = new CliDI();

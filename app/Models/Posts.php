@@ -15,7 +15,7 @@ use Phalcon\Mvc\View\Simple;
  * @property Simple|Images[] $images
  * @method   Simple|Images[] getImages($parameters = null)
  */
-class Posts extends ModelBase
+class Posts extends ModelPostable
 {
 
     /**
@@ -113,11 +113,6 @@ class Posts extends ModelBase
          * Возможные пустые поля (для отключения валидации)
          */
         $this->allowEmptyStringValues(['updated_at']);
-
-        /**
-         * Обновление в БД только измененных полей
-         */
-        $this->useDynamicUpdate(true);
 
         /**
          * Пропуск полей при создании

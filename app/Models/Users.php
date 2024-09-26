@@ -15,7 +15,7 @@ use Phalcon\Mvc\Model\Behavior\SoftDelete;
 /**
  * Токены авторизации
  */
-class Users extends ModelCacheable
+class Users extends ModelBase
 {
 
     /**
@@ -55,6 +55,8 @@ class Users extends ModelCacheable
      */
     public function beforeSave(): void
     {
+        parent::beforeSave();
+
         /**
          * Шифрование пароля перед сохранением (при создании или при изменении пароля)
          */
@@ -155,10 +157,7 @@ class Users extends ModelCacheable
      */
     public function initialize(): void
     {
-        /**
-         * Сохранение слепка данных перед сохранением
-         */
-        $this->keepSnapshots(true);
+        parent::initialize();
 
         /**
          * Подмена удаления на отключение записи

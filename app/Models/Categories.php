@@ -18,7 +18,7 @@ use Phalcon\Mvc\View\Simple;
  * @property Simple|Images[] $images
  * @method   Simple|Images[] getImages($parameters = null)
  */
-class Categories extends ModelBase
+class Categories extends ModelPostable
 {
 
     /**

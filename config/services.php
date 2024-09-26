@@ -6,6 +6,8 @@ declare(strict_types=1);
 
 use Phalcon\Cache\AdapterFactory;
 use Phalcon\Cache\Cache;
+use Phalcon\Logger\Adapter\Stream;
+use Phalcon\Logger\Logger;
 use Phalcon\Storage\SerializerFactory;
 
 /**
@@ -65,3 +67,18 @@ $di->setShared('security', function(){
 
     return $security;
 });
+
+/**
+ * Регистрация сервиса логирования запросов на изменение
+ * Только если тип окружения установлен в "development"
+ */
+if ($di->getConfig()->application->isDev) {
+    $di->setShared('logger', function () {
+        return new Logger(
+            'messages',
+            [
+                'main' => new Stream($this->getConfig()->application->logsDir . 'changes.log')
+            ]
+        );
+    });
+}

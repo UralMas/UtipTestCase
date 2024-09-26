@@ -17,6 +17,11 @@ try {
     $di = new FactoryDefault();
 
     /**
+     * Автолоад классов
+     */
+    include BASE_PATH . '/config/loader.php';
+
+    /**
      * Регистрация сервисов
      */
     include BASE_PATH . '/config/services.php';
@@ -25,11 +30,6 @@ try {
      * Чтение конфигурации
      */
     $config = $di->getConfig();
-
-    /**
-     * Автолоад классов
-     */
-    include BASE_PATH . '/config/loader.php';
 
     $app = new Micro($di);
 
