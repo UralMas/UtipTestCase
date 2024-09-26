@@ -94,11 +94,18 @@ class ModelCacheable extends Model
      */
     public function afterSave(): void
     {
-        $this->getDI()->getModelsCache()->clear();
+        $this->clearCache();
     }
 
     public function afterDelete(): void
     {
-        $this->getDI()->getModelsCache()->clear();
+        $this->clearCache();
+    }
+
+    private function clearCache(): void
+    {
+        if ($this->getDI()->has('modelsCache')) {
+            $this->getDI()->getModelsCache()->clear();
+        }
     }
 }

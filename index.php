@@ -27,7 +27,7 @@ try {
     $config = $di->getConfig();
 
     /**
-     * Автолоад файлов
+     * Автолоад классов
      */
     include BASE_PATH . '/config/loader.php';
 

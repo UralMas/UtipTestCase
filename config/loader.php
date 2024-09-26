@@ -2,9 +2,6 @@
 
 use Phalcon\Autoload\Loader;
 
-/** @var Phalcon\Di\Di $di */
-$config = $di->getConfig();
-
 $loader = new Loader();
 
 /**
