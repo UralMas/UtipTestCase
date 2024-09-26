@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace UtipTestCase\Controllers;
 
 use Exception;
+use Phalcon\Mvc\Controller;
 use UtipTestCase\Libraries\TokensHelper;
 use UtipTestCase\Libraries\UsersHelper;
 use UtipTestCase\Models\Tokens;
@@ -13,7 +14,7 @@ use UtipTestCase\Models\Users;
 /**
  * Контроллер авторизации и регистрации
  */
-class AuthController extends PostsController
+class AuthController extends Controller
 {
 
     /**

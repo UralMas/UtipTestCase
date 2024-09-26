@@ -34,7 +34,7 @@ $app->mount($auth);
  */
 $posts = new MicroCollection();
 
-$posts->setHandler(Controllers\AuthController::class, true)
+$posts->setHandler(Controllers\PostsController::class, true)
     ->setPrefix('/api/v1/posts')
     ->get(
         '/',
