@@ -8,6 +8,8 @@ use Phalcon\Cache\AdapterFactory;
 use Phalcon\Cache\Cache;
 use Phalcon\Logger\Adapter\Stream;
 use Phalcon\Logger\Logger;
+use Phalcon\Mvc\Model\MetaData\Apcu;
+use Phalcon\Mvc\Model\MetaData\Strategy\Introspection;
 use Phalcon\Storage\SerializerFactory;
 
 /**
@@ -54,6 +56,26 @@ $di->setShared(
         $adapter = $adapterFactory->newInstance('apcu', $options);
 
         return new Cache($adapter);
+    }
+);
+
+/**
+ * Настройка кэширования метаданных таблиц БД
+ */
+$di->set(
+    'modelsMetadata',
+    function () {
+        $serializerFactory = new SerializerFactory();
+        $adapterFactory    = new AdapterFactory($serializerFactory);
+        $options = [
+            'lifetime' => $this->getConfig()->application->cacheLifetime,
+            'prefix'   => 'my-prefix',
+        ];
+
+        $metadata = new Apcu($adapterFactory, $options);
+        $metadata->setStrategy(new Introspection());
+
+        return $metadata;
     }
 );
 
