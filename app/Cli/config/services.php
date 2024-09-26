@@ -40,7 +40,7 @@ $di->setShared('security', function(){
 });
 
 /**
- * Регистрация диспетчера зависимостей
+ * Регистрация диспетчера запросов
  */
 $di->setShared('dispatcher', function(){
     $dispatcher = new Phalcon\Cli\Dispatcher();

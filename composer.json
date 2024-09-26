@@ -7,5 +7,8 @@
         "ext-fileinfo": "*",
         "ext-sodium": "*",
         "ext-phalcon": "5.8.0"
+    },
+    "require-dev": {
+        "phalcon/migrations": "^3.0"
     }
 }

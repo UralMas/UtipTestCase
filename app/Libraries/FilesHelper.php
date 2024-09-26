@@ -48,7 +48,7 @@ class FilesHelper
             throw new Exception('Файл с таким же названием уже был загружен', 400);
         }
 
-        $imagesPath = DI::getDefault()->getConfig()->application->imagesFolder;
+        $imagesPath = DI::getDefault()->getConfig()->application->imagesDir;
 
         /**
          * Проверка на существование папки хранения изображений

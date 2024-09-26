@@ -34,7 +34,7 @@ class Images extends ModelBase
     public function afterDelete(): void
     {
         // Удаление файла после удаления записи
-        @unlink($this->getDI()->getConfig()->application->imagesFolder . $this->filename);
+        @unlink($this->getDI()->getConfig()->application->imagesDir . $this->filename);
     }
 
     /**
